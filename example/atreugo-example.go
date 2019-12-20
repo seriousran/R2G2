@@ -1,52 +1,22 @@
 package main
 
 import (
-  "fmt"
-  //"log"
-  //"encoding/json"
   "github.com/savsgio/atreugo"
-  "github.com/mmcdole/gofeed"
 )
 
 func main() {
-  
-  fp := gofeed.NewParser()
+	config := &atreugo.Config{
+		Addr: "0.0.0.0:8000",
+	}
+	server := atreugo.New(config)
 
-  config := &atreugo.Config{
-    Addr: "0.0.0.0:8080",
-  }
-  server := atreugo.New(config)
+	// Register a route
+	server.Path("GET", "/", func(ctx *atreugo.RequestCtx) error {
+		return ctx.TextResponse("Hello R2G2")
+	})
 
-  postRssReq(server, fp)
-}
-
-type RssRes struct {
-  Url   string
-  RssBody string
-}
-
-func postRssReq(server *atreugo.Atreugo, fp *gofeed.Parser) {
-  server.Path("POST", "/rss", func(ctx *atreugo.RequestCtx) error {
-    fmt.Println(string(ctx.PostBody()))
-    url := string(ctx.FormValue("url"))
-    
-    
-    feed, _ := fp.ParseURL(url)
-    return ctx.JSONResponse(feed)
-    
-	//rss_res := []RssRes{
-	//	{url, url},
-	//}
-    
-    //res, err := json.Marshal(feed)
-    //if err != nil {
-    //  log.Fatal(err)
-    //}
-    //return ctx.JSONResponse(res)
-  })
-
-  err := server.ListenAndServe()
-  if err != nil {
-    panic(err)
-  }
+	err := server.ListenAndServe()
+	if err != nil {
+		panic(err)
+	}
 }
