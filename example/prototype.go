@@ -15,7 +15,6 @@ func main() {
   // example code for GET
   r.GET("/ping", func(c *gin.Context) {
     
-    fp := gofeed.NewParser()
     feed, _ := fp.ParseURL("http://lv99.tistory.com/rss")
     fmt.Println(feed.Title)
     
